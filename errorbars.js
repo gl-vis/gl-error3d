@@ -23,10 +23,10 @@ function ErrorBars(gl, buffer, vao, shader) {
   this.vao          = vao
   this.bounds       = [[ Infinity, Infinity, Infinity], [-Infinity,-Infinity,-Infinity]]
   this.clipBounds   = [[-Infinity,-Infinity,-Infinity], [ Infinity, Infinity, Infinity]]
-  this.lineWidth    = 1
-  this.capSize      = 0.1
-  this.lineCount    = 0
-  this.triCount     = 0
+  this.lineWidth    = [1,1,1]
+  this.capSize      = [0.1,0.1,0.1]
+  this.lineCount    = [0,0,0]
+  this.lineOffset   = [0,0,0]
 }
 
 var proto = ErrorBars.prototype
@@ -35,19 +35,19 @@ proto.draw = function(cameraParams) {
   var gl = this.gl
   var uniforms        = this.shader.uniforms
   
-  gl.lineWidth(this.lineWidth)
-  gl.disable(gl.CULL_FACE)
-
+  
   this.shader.bind()
   uniforms.model      = cameraParams.model      || IDENTITY
   uniforms.view       = cameraParams.view       || IDENTITY
   uniforms.projection = cameraParams.projection || IDENTITY
   uniforms.clipBounds = this.clipBounds
-  uniforms.capSize    = this.capSize
 
   this.vao.bind()
-  this.vao.draw(gl.LINES, this.lineCount)
-  this.vao.draw(gl.LINES, this.triCount, this.lineCount)
+  for(var i=0; i<3; ++i) {
+    gl.lineWidth(this.lineWidth[i])
+    uniforms.capSize = this.capSize[i]
+    this.vao.draw(gl.LINES, this.lineCount[i], this.lineOffset[i])
+  }
   this.vao.unbind()
 }
 
@@ -95,31 +95,39 @@ proto.update = function(options) {
   }
   if('lineWidth' in options) {
     this.lineWidth = options.lineWidth
+    if(!Array.isArray(this.lineWidth)) {
+      this.lineWidth = [this.lineWidth, this.lineWidth, this.lineWidth]
+    }
   }
   if('capSize' in options) {
     this.capSize = options.capSize
+    if(!Array.isArray(this.capSize)) {
+      this.capSize = [this.capSize, this.capSize, this.capSize]
+    }
   }
 
   var color    = options.color || [[0,0,0],[0,0,0],[0,0,0]]
   var position = options.position
   var error    = options.error
-  
   if(!Array.isArray(color[0])) {
     color = [color,color,color]
   }
 
   if(position && error) {
 
-    this.bounds = [[Infinity, Infinity, Infinity], [-Infinity,-Infinity,-Infinity]]
     var verts       = []
     var n           = position.length
     var vertexCount = 0
+    this.bounds     = [[ Infinity, Infinity, Infinity], 
+                       [-Infinity,-Infinity,-Infinity]]
+    this.lineCount  = [0,0,0]
 
     //Build geometry for lines
-    for(var i=0; i<n; ++i) {
-      var p = position[i]
-      var e = error[i]
-      for(var j=0; j<3; ++j) {
+    for(var j=0; j<3; ++j) {
+      this.lineOffset[j] = vertexCount
+      for(var i=0; i<n; ++i) {
+        var p = position[i]
+        var e = error[i]
         var c = color[j]
         if(Array.isArray(c[0])) {
           c = color[i]
@@ -133,8 +141,8 @@ proto.update = function(options) {
                      x[0], x[1], x[2],
                      c[0], c[1], c[2],
                         0,    0,    0)
-          vertexCount += 2
           updateBounds(this.bounds, x)
+          vertexCount += 2 + emitFace(verts, x, c, j)
         }
         if(e[1][j] > 0) {
           var x = p.slice()
@@ -145,39 +153,12 @@ proto.update = function(options) {
                      x[0], x[1], x[2],
                      c[0], c[1], c[2],
                         0,    0,    0)
-          vertexCount += 2
           updateBounds(this.bounds, x)
+          vertexCount += 2 + emitFace(verts, x, c, j)
         }
       }
+      this.lineCount[j] = vertexCount - this.lineOffset[j]
     }
-    this.lineCount = vertexCount
-
-    //Build geometry for caps
-    for(var i=0; i<n; ++i) {
-      var p = position[i]
-      var e = error[i]
-      var c = color
-      if(Array.isArray(color[0])) {
-        c = color[i]
-      }
-      for(var j=0; j<3; ++j) {
-        var c = color[j]
-        if(Array.isArray(c[0])) {
-          c = color[i]
-        }
-        if(e[0][j] < 0) {
-          var x = p.slice()
-          x[j] += e[0][j]
-          vertexCount += emitFace(verts, x, c, j)
-        }
-        if(e[1][j] > 0) {
-          var x = p.slice()
-          x[j] += e[1][j]
-          vertexCount += emitFace(verts, x, c, j)
-        }
-      }
-    }
-    this.triCount = vertexCount - this.lineCount
 
     this.buffer.update(verts)
   }
