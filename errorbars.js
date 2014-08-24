@@ -100,10 +100,14 @@ proto.update = function(options) {
     this.capSize = options.capSize
   }
 
-  var color    = options.color || [0,0,0]
+  var color    = options.color || [[0,0,0],[0,0,0],[0,0,0]]
   var position = options.position
   var error    = options.error
   
+  if(!Array.isArray(color[0])) {
+    color = [color,color,color]
+  }
+
   if(position && error) {
 
     this.bounds = [[Infinity, Infinity, Infinity], [-Infinity,-Infinity,-Infinity]]
@@ -115,11 +119,11 @@ proto.update = function(options) {
     for(var i=0; i<n; ++i) {
       var p = position[i]
       var e = error[i]
-      var c = color
-      if(Array.isArray(color[0])) {
-        c = color[i]
-      }
       for(var j=0; j<3; ++j) {
+        var c = color[j]
+        if(Array.isArray(c[0])) {
+          c = color[i]
+        }
         if(e[0][j] < 0) {
           var x = p.slice()
           x[j] += e[0][j]
@@ -157,6 +161,10 @@ proto.update = function(options) {
         c = color[i]
       }
       for(var j=0; j<3; ++j) {
+        var c = color[j]
+        if(Array.isArray(c[0])) {
+          c = color[i]
+        }
         if(e[0][j] < 0) {
           var x = p.slice()
           x[j] += e[0][j]

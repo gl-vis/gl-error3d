@@ -92,7 +92,7 @@ Updates the error bar object
 
 * `position` is the position of each point in the plot
 * `error` is an array of error bounds represented as `[lo,hi]` for each point
-* `color` is either a single RGB or an array of RGB colors representing the colors of each point
+* `color` a length 3 array of arrays giving the color of the error bars along each axis.
 * `lineWidth` is the width of the error bar lines in pixels
 * `capSize` is the size of the cap for error bars
 * `clipBounds` is a box to which all error bars will be clipped
