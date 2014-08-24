@@ -1,6 +1,6 @@
 {
   "name": "gl-error-bars",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Draws error bars around points",
   "main": "errorbars.js",
   "directories": {
@@ -36,6 +36,8 @@
     "gl-axes": "^5.0.0"
   },
   "browserify": {
-    "transform": [ "glslify" ]
+    "transform": [
+      "glslify"
+    ]
   }
 }
