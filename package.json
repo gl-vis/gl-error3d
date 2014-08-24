@@ -1,0 +1,27 @@
+{
+  "name": "gl-error-bars",
+  "version": "1.0.0",
+  "description": "Draws error bars around points",
+  "main": "errorbars.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mikolalysenko/gl-error-bars.git"
+  },
+  "keywords": [
+    "error",
+    "bar",
+    "webgl"
+  ],
+  "author": "Mikola Lysenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mikolalysenko/gl-error-bars/issues"
+  },
+  "homepage": "https://github.com/mikolalysenko/gl-error-bars"
+}
