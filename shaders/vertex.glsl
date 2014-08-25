@@ -1,9 +1,10 @@
 precision mediump float;
 
-attribute vec3 position, color, offset;
+attribute vec3 position, offset;
+attribute vec4 color;
 uniform mat4 model, view, projection;
 uniform float capSize;
-varying vec3 fragColor;
+varying vec4 fragColor;
 varying vec3 fragPosition;
 
 void main() {

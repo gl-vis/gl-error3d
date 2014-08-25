@@ -81,7 +81,7 @@ function emitFace(verts, x, c, d) {
   for(var i=0; i<offsets.length; ++i) {
     var o = offsets[i]
     verts.push(x[0], x[1], x[2],
-               c[0], c[1], c[2],
+               c[0], c[1], c[2], c[3],
                o[0], o[1], o[2])
   }
   return offsets.length
@@ -132,14 +132,17 @@ proto.update = function(options) {
         if(Array.isArray(c[0])) {
           c = color[i]
         }
+        if(c.length === 3) {
+          c = [c[0], c[1], c[2], 1]
+        }
         if(e[0][j] < 0) {
           var x = p.slice()
           x[j] += e[0][j]
           verts.push(p[0], p[1], p[2],
-                     c[0], c[1], c[2],
+                     c[0], c[1], c[2], c[3],
                         0,    0,    0,
                      x[0], x[1], x[2],
-                     c[0], c[1], c[2],
+                     c[0], c[1], c[2], c[3],
                         0,    0,    0)
           updateBounds(this.bounds, x)
           vertexCount += 2 + emitFace(verts, x, c, j)
@@ -148,10 +151,10 @@ proto.update = function(options) {
           var x = p.slice()
           x[j] += e[1][j]
           verts.push(p[0], p[1], p[2],
-                     c[0], c[1], c[2],
+                     c[0], c[1], c[2], c[3],
                         0,    0,    0,
                      x[0], x[1], x[2],
-                     c[0], c[1], c[2],
+                     c[0], c[1], c[2], c[3],
                         0,    0,    0)
           updateBounds(this.bounds, x)
           vertexCount += 2 + emitFace(verts, x, c, j)
@@ -178,21 +181,21 @@ function createErrorBars(gl, options) {
         type:   gl.FLOAT,
         size:   3,
         offset: 0,
-        stride: 36
+        stride: 40
       },
       {
         buffer: buffer,
         type:   gl.FLOAT,
-        size:   3,
+        size:   4,
         offset: 12,
-        stride: 36
+        stride: 40
       },
       {
         buffer: buffer,
         type:   gl.FLOAT,
         size:   3,
-        offset: 24,
-        stride: 36
+        offset: 28,
+        stride: 40
       }
     ])
 
