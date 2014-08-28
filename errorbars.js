@@ -125,8 +125,17 @@ proto.update = function(options) {
     //Build geometry for lines
     for(var j=0; j<3; ++j) {
       this.lineOffset[j] = vertexCount
+
+i_loop:
       for(var i=0; i<n; ++i) {
         var p = position[i]
+
+        for(var k=0; k<3; ++k) {
+          if(isNaN(p[k]) || !isFinite(p[k])) {
+            continue i_loop
+          }
+        }
+
         var e = error[i]
         var c = color[j]
         if(Array.isArray(c[0])) {
@@ -134,6 +143,9 @@ proto.update = function(options) {
         }
         if(c.length === 3) {
           c = [c[0], c[1], c[2], 1]
+        }
+        if(isNaN(e[0][j]) || isNaN(e[1][j])) {
+          continue
         }
         if(e[0][j] < 0) {
           var x = p.slice()
