@@ -35,7 +35,6 @@ proto.draw = function(cameraParams) {
   var gl = this.gl
   var uniforms        = this.shader.uniforms
   
-  
   this.shader.bind()
   uniforms.model      = cameraParams.model      || IDENTITY
   uniforms.view       = cameraParams.view       || IDENTITY
@@ -46,7 +45,7 @@ proto.draw = function(cameraParams) {
   for(var i=0; i<3; ++i) {
     gl.lineWidth(this.lineWidth[i])
     uniforms.capSize = this.capSize[i]
-    this.vao.draw(gl.LINES, this.lineCount[i], this.lineOffset[i])
+    gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
   }
   this.vao.unbind()
 }

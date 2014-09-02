@@ -12,5 +12,5 @@ void main() {
   worldPosition       = (worldPosition / worldPosition.w) + vec4(capSize * offset, 0.0);
   gl_Position         = projection * view * worldPosition;
   fragColor           = color;
-  fragPosition        = worldPosition.xyz;
+  fragPosition        = position;
 }
