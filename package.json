@@ -1,6 +1,6 @@
 {
   "name": "gl-error-bars",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Draws error bars around points",
   "main": "errorbars.js",
   "directories": {
