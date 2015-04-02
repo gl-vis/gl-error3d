@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mikolalysenko/gl-error-bars.git"
+    "url": "git://github.com/mikolalysenko/gl-error3d.git"
   },
   "keywords": [
     "error",
@@ -21,9 +21,9 @@
   "author": "Mikola Lysenko",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mikolalysenko/gl-error-bars/issues"
+    "url": "https://github.com/mikolalysenko/gl-error3d/issues"
   },
-  "homepage": "https://github.com/mikolalysenko/gl-error-bars",
+  "homepage": "https://github.com/mikolalysenko/gl-error3d",
   "dependencies": {
     "gl-vao": "^1.1.3",
     "gl-buffer": "^2.0.8",
