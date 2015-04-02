@@ -24,14 +24,23 @@ function ErrorBars(gl, buffer, vao, shader) {
   this.bounds       = [[ Infinity, Infinity, Infinity], [-Infinity,-Infinity,-Infinity]]
   this.clipBounds   = [[-Infinity,-Infinity,-Infinity], [ Infinity, Infinity, Infinity]]
   this.lineWidth    = [1,1,1]
-  this.capSize      = [0.1,0.1,0.1]
+  this.capSize      = [0.01,0.01,0.01]
   this.lineCount    = [0,0,0]
   this.lineOffset   = [0,0,0]
+  this.opacity      = 1
 }
 
 var proto = ErrorBars.prototype
 
-proto.draw = function(cameraParams) {
+proto.isOpaque = function() {
+  return this.opacity >= 1
+}
+
+proto.isTransparent = function() {
+  return this.opacity < 1
+}
+
+proto.drawTransparent = proto.draw = function(cameraParams) {
   var gl = this.gl
   var uniforms        = this.shader.uniforms
   
@@ -40,6 +49,7 @@ proto.draw = function(cameraParams) {
   uniforms.view       = cameraParams.view       || IDENTITY
   uniforms.projection = cameraParams.projection || IDENTITY
   uniforms.clipBounds = this.clipBounds
+  uniforms.opacity    = this.opacity
 
   this.vao.bind()
   for(var i=0; i<3; ++i) {
@@ -89,9 +99,6 @@ function emitFace(verts, x, c, d) {
 proto.update = function(options) {
   options = options || {}
 
-  if('clipBounds' in options) {
-    this.clipBounds = options.clipBounds
-  }
   if('lineWidth' in options) {
     this.lineWidth = options.lineWidth
     if(!Array.isArray(this.lineWidth)) {
@@ -103,6 +110,9 @@ proto.update = function(options) {
     if(!Array.isArray(this.capSize)) {
       this.capSize = [this.capSize, this.capSize, this.capSize]
     }
+  }
+  if('opacity' in options) {
+    this.opacity = opacity
   }
 
   var color    = options.color || [[0,0,0],[0,0,0],[0,0,0]]
@@ -175,6 +185,8 @@ i_loop:
     }
 
     this.buffer.update(verts)
+
+    console.log(this.bounds)
   }
 }
 
@@ -184,7 +196,8 @@ proto.dispose = function() {
   this.vao.dispose()
 }
 
-function createErrorBars(gl, options) {
+function createErrorBars(options) {
+  var gl = options.gl
   var buffer = createBuffer(gl) 
   var vao = createVAO(gl, [
       {
