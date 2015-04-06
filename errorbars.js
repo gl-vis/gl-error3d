@@ -192,7 +192,6 @@ i_loop:
       }
       this.lineCount[j] = vertexCount - this.lineOffset[j]
     }
-
     this.buffer.update(verts)
   }
 }
