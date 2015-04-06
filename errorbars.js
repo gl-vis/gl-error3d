@@ -21,10 +21,11 @@ function ErrorBars(gl, buffer, vao, shader) {
   this.shader       = shader
   this.buffer       = buffer
   this.vao          = vao
+  this.pixelRatio   = 1
   this.bounds       = [[ Infinity, Infinity, Infinity], [-Infinity,-Infinity,-Infinity]]
   this.clipBounds   = [[-Infinity,-Infinity,-Infinity], [ Infinity, Infinity, Infinity]]
   this.lineWidth    = [1,1,1]
-  this.capSize      = [0.01,0.01,0.01]
+  this.capSize      = [10,10,10]
   this.lineCount    = [0,0,0]
   this.lineOffset   = [0,0,0]
   this.opacity      = 1
@@ -45,16 +46,24 @@ proto.drawTransparent = proto.draw = function(cameraParams) {
   var uniforms        = this.shader.uniforms
   
   this.shader.bind()
+  var view       = uniforms.view       = cameraParams.view       || IDENTITY
+  var projection = uniforms.projection = cameraParams.projection || IDENTITY
   uniforms.model      = cameraParams.model      || IDENTITY
-  uniforms.view       = cameraParams.view       || IDENTITY
-  uniforms.projection = cameraParams.projection || IDENTITY
   uniforms.clipBounds = this.clipBounds
   uniforms.opacity    = this.opacity
+
+
+  var cx = view[12]
+  var cy = view[13]
+  var cz = view[14]
+  var cw = view[15]
+  var pixelScaleF = this.pixelRatio * (projection[3]*cx + projection[7]*cy + projection[11]*cz + projection[15]*cw) / gl.drawingBufferHeight
+
 
   this.vao.bind()
   for(var i=0; i<3; ++i) {
     gl.lineWidth(this.lineWidth[i])
-    uniforms.capSize = this.capSize[i]
+    uniforms.capSize = this.capSize[i] * pixelScaleF
     gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
   }
   this.vao.unbind()
