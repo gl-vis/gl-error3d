@@ -194,8 +194,6 @@ i_loop:
     }
 
     this.buffer.update(verts)
-
-    console.log(this.bounds)
   }
 }
 
