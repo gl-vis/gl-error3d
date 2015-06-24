@@ -2,14 +2,9 @@
 
 module.exports = createErrorBars
 
-var glslify       = require('glslify')
 var createBuffer  = require('gl-buffer')
 var createVAO     = require('gl-vao')
-
-var createShader  = glslify({
-  vert: './shaders/vertex.glsl',
-  frag: './shaders/fragment.glsl'
-})
+var createShader  = require('./shaders/index')
 
 var IDENTITY = [1,0,0,0,
                 0,1,0,0,
@@ -44,7 +39,7 @@ proto.isTransparent = function() {
 proto.drawTransparent = proto.draw = function(cameraParams) {
   var gl = this.gl
   var uniforms        = this.shader.uniforms
-  
+
   this.shader.bind()
   var view       = uniforms.view       = cameraParams.view       || IDENTITY
   var projection = uniforms.projection = cameraParams.projection || IDENTITY
@@ -136,7 +131,7 @@ proto.update = function(options) {
     var verts       = []
     var n           = position.length
     var vertexCount = 0
-    this.bounds     = [[ Infinity, Infinity, Infinity], 
+    this.bounds     = [[ Infinity, Infinity, Infinity],
                        [-Infinity,-Infinity,-Infinity]]
     this.lineCount  = [0,0,0]
 
@@ -204,7 +199,7 @@ proto.dispose = function() {
 
 function createErrorBars(options) {
   var gl = options.gl
-  var buffer = createBuffer(gl) 
+  var buffer = createBuffer(gl)
   var vao = createVAO(gl, [
       {
         buffer: buffer,
