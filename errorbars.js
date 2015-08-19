@@ -116,7 +116,7 @@ proto.update = function(options) {
     }
   }
   if('opacity' in options) {
-    this.opacity = opacity
+    this.opacity = options.opacity
   }
 
   var color    = options.color || [[0,0,0],[0,0,0],[0,0,0]]
