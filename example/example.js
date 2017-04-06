@@ -1,8 +1,9 @@
 var shell = require("gl-now")({ clearColor: [0,0,0,0] })
 var camera = require("game-shell-orbit-camera")(shell)
-var createAxes = require("gl-axes")
+var createAxes = require("gl-axes3d")
 var createErrorBars = require('../errorbars')
 var mat4 = require("gl-matrix").mat4
+
 
 var bounds = [[-5,-5,-5], [5,5,5]]
 
@@ -17,7 +18,8 @@ shell.on("gl-init", function() {
     bounds: bounds
   })
 
-  errorbars = createErrorBars(gl, {
+  errorbars = createErrorBars({
+    gl: gl,
     position: [
       [0,0,0],
       [0,2,0],
@@ -53,5 +55,6 @@ shell.on("gl-render", function() {
   }
 
   axes.draw(cameraParameters)
+
   errorbars.draw(cameraParameters)
 })
