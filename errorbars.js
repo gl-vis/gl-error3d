@@ -58,7 +58,7 @@ proto.drawTransparent = proto.draw = function(cameraParams) {
   for(var i=0; i<3; ++i) {
     gl.lineWidth(this.lineWidth[i])
     uniforms.capSize = this.capSize[i] * pixelScaleF
-    if (this.lineOffset[i] != this.lineCount[i]) {
+    if (this.lineCount[i]) {
       gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
     }
   }
