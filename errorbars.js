@@ -54,12 +54,13 @@ proto.drawTransparent = proto.draw = function(cameraParams) {
   var cw = view[15]
   var pixelScaleF = this.pixelRatio * (projection[3]*cx + projection[7]*cy + projection[11]*cz + projection[15]*cw) / gl.drawingBufferHeight
 
-
   this.vao.bind()
   for(var i=0; i<3; ++i) {
     gl.lineWidth(this.lineWidth[i])
     uniforms.capSize = this.capSize[i] * pixelScaleF
-    gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
+    if (this.lineCount[i]) {
+      gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
+    }
   }
   this.vao.unbind()
 }
