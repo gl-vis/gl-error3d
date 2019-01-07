@@ -7,7 +7,8 @@
     "example": "example"
   },
   "scripts": {
-    "test": "budo example/example"
+    "test": "budo example/example",
+    "postshrinkwrap": "chttps ."
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "glslify": "^6.0.2"
   },
   "devDependencies": {
+    "chttps": "^1.0.6",
     "game-shell-orbit-camera": "^1.0.0",
     "gl-axes3d": "^1.2.5",
     "gl-matrix": "^2.3.2",
