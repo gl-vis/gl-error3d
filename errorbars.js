@@ -226,9 +226,9 @@ function createErrorBars(options) {
     ])
 
   var shader = createShader(gl)
-  shader.attributes.position.location = 0
-  shader.attributes.color.location    = 1
-  shader.attributes.offset.location   = 2
+  shader.attributes.position.location     = 0
+  shader.attributes.color.location        = 1
+  shader.attributes.nextPosition.location = 2
 
   var result = new ErrorBars(gl, buffer, vao, shader)
   result.update(options)

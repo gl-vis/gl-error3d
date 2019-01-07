@@ -10,6 +10,6 @@ module.exports = function(gl) {
   return createShader(gl, vertSrc, fragSrc, null, [
     {name: 'position', type: 'vec3'},
     {name: 'color', type: 'vec4'},
-    {name: 'offset', type: 'vec3'}
+    {name: 'nextPosition', type: 'vec3'}
   ])
 }
