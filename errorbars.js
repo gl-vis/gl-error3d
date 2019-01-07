@@ -24,6 +24,7 @@ function ErrorBars(gl, buffer, vao, shader) {
   this.lineCount    = [0,0,0]
   this.lineOffset   = [0,0,0]
   this.opacity      = 1
+  this.pixelRatio   = 1
 }
 
 var proto = ErrorBars.prototype
@@ -46,7 +47,8 @@ proto.drawTransparent = proto.draw = function(cameraParams) {
   uniforms.model      = cameraParams.model      || IDENTITY
   uniforms.clipBounds = this.clipBounds
   uniforms.opacity    = this.opacity
-
+  uniforms.screenShape = [gl.drawingBufferWidth, gl.drawingBufferHeight]
+  uniforms.pixelRatio = this.pixelRatio
 
   var cx = view[12]
   var cy = view[13]
@@ -56,7 +58,7 @@ proto.drawTransparent = proto.draw = function(cameraParams) {
 
   this.vao.bind()
   for(var i=0; i<3; ++i) {
-    gl.lineWidth(this.lineWidth[i])
+    uniforms.lineWidth = this.lineWidth[i]
     uniforms.capSize = this.capSize[i] * pixelScaleF
     if (this.lineCount[i]) {
       gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
@@ -72,7 +74,7 @@ function updateBounds(bounds, point) {
   }
 }
 
-var FACE_TABLE = (function(){
+function createFaceTable() {
   var table = new Array(3)
   for(var d=0; d<3; ++d) {
     var row = []
@@ -87,19 +89,9 @@ var FACE_TABLE = (function(){
     table[d] = row
   }
   return table
-})()
-
-
-function emitFace(verts, x, c, d) {
-  var offsets = FACE_TABLE[d]
-  for(var i=0; i<offsets.length; ++i) {
-    var o = offsets[i]
-    verts.push(x[0], x[1], x[2],
-               c[0], c[1], c[2], c[3],
-               o[0], o[1], o[2])
-  }
-  return offsets.length
 }
+
+var FACE_TABLE = createFaceTable()
 
 proto.update = function(options) {
   options = options || {}
@@ -171,7 +163,7 @@ i_loop:
                      c[0], c[1], c[2], c[3],
                         0,    0,    0)
           updateBounds(this.bounds, x)
-          vertexCount += 2 + emitFace(verts, x, c, j)
+          vertexCount += 2 + emitFace(x, c, j)
         }
         if(e[1][j] > 0) {
           var x = p.slice()
@@ -183,12 +175,23 @@ i_loop:
                      c[0], c[1], c[2], c[3],
                         0,    0,    0)
           updateBounds(this.bounds, x)
-          vertexCount += 2 + emitFace(verts, x, c, j)
+          vertexCount += 2 + emitFace(x, c, j)
         }
       }
       this.lineCount[j] = vertexCount - this.lineOffset[j]
     }
     this.buffer.update(verts)
+  }
+
+  function emitFace(x, c, d) {
+    var shifts = FACE_TABLE[d]
+    for(var i=0; i<shifts.length; ++i) {
+      var o = shifts[i]
+      verts.push(x[0], x[1], x[2],
+                 c[0], c[1], c[2], c[3],
+                 o[0], o[1], o[2])
+    }
+    return shifts.length
   }
 }
 
@@ -228,7 +231,7 @@ function createErrorBars(options) {
   var shader = createShader(gl)
   shader.attributes.position.location     = 0
   shader.attributes.color.location        = 1
-  shader.attributes.nextPosition.location = 2
+  shader.attributes.shift.location = 2
 
   var result = new ErrorBars(gl, buffer, vao, shader)
   result.update(options)
