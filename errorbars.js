@@ -159,6 +159,7 @@ i_loop:
           c = [c[0], c[1], c[2], 1]
         } else if(c.length === 4) {
           c = [c[0], c[1], c[2], c[3]]
+          if(this.opacity === 1 && c[3] < 1) this.opacity = 0.999
         }
 
         if(isNaN(e[0][j]) || isNaN(e[1][j])) {
