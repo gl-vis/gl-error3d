@@ -157,7 +157,10 @@ i_loop:
         }
         if(c.length === 3) {
           c = [c[0], c[1], c[2], 1]
+        } else if(c.length === 4) {
+          c = [c[0], c[1], c[2], c[3]]
         }
+
         if(isNaN(e[0][j]) || isNaN(e[1][j])) {
           continue
         }
