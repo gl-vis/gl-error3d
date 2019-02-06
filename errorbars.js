@@ -24,16 +24,17 @@ function ErrorBars(gl, buffer, vao, shader) {
   this.lineCount    = [0,0,0]
   this.lineOffset   = [0,0,0]
   this.opacity      = 1
+  this.hasAlpha     = false
 }
 
 var proto = ErrorBars.prototype
 
 proto.isOpaque = function() {
-  return this.opacity >= 1
+  return !this.hasAlpha
 }
 
 proto.isTransparent = function() {
-  return this.opacity < 1
+  return this.hasAlpha
 }
 
 proto.drawTransparent = proto.draw = function(cameraParams) {
@@ -116,8 +117,13 @@ proto.update = function(options) {
       this.capSize = [this.capSize, this.capSize, this.capSize]
     }
   }
+
+  this.hasAlpha = false // default to no transparent draw
   if('opacity' in options) {
-    this.opacity = options.opacity
+    this.opacity = +options.opacity
+    if(this.opacity < 1) {
+      this.hasAlpha = true;
+    }
   }
 
   var color    = options.color || [[0,0,0],[0,0,0],[0,0,0]]
@@ -159,6 +165,7 @@ i_loop:
           c = [c[0], c[1], c[2], 1]
         } else if(c.length === 4) {
           c = [c[0], c[1], c[2], c[3]]
+          if(!this.hasAlpha && c[3] < 1) this.hasAlpha = true
         }
 
         if(isNaN(e[0][j]) || isNaN(e[1][j])) {
