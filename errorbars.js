@@ -123,8 +123,6 @@ proto.update = function(options) {
     this.opacity = +options.opacity
     if(this.opacity < 1) {
       this.hasAlpha = true;
-    } else {
-      this.hasAlpha = false;
     }
   }
 
