@@ -1,6 +1,6 @@
 {
   "name": "gl-error3d",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Draws error bars around points",
   "main": "errorbars.js",
   "directories": {
