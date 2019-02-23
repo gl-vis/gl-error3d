@@ -53,11 +53,14 @@ proto.drawTransparent = proto.draw = function(cameraParams) {
   var cy = view[13]
   var cz = view[14]
   var cw = view[15]
-  var pixelScaleF = this.pixelRatio * (projection[3]*cx + projection[7]*cy + projection[11]*cz + projection[15]*cw) / gl.drawingBufferHeight
+
+  var isOrtho = cameraParams._ortho || false
+  var orthoFix = (isOrtho) ? 2 : 1 // double up padding for orthographic ticks & labels
+  var pixelScaleF = orthoFix * this.pixelRatio * (projection[3]*cx + projection[7]*cy + projection[11]*cz + projection[15]*cw) / gl.drawingBufferHeight
 
   this.vao.bind()
   for(var i=0; i<3; ++i) {
-    gl.lineWidth(this.lineWidth[i])
+    gl.lineWidth(this.lineWidth[i] * this.pixelRatio)
     uniforms.capSize = this.capSize[i] * pixelScaleF
     if (this.lineCount[i]) {
       gl.drawArrays(gl.LINES, this.lineOffset[i], this.lineCount[i])
